@@ -1,0 +1,17 @@
+{
+  "$schema": "../icon.schema.json",
+  "contributors": [
+    "jamiemlaw"
+  ],
+  "tags": [
+    "help",
+    "unknown",
+    "query",
+    "?"
+  ],
+  "categories": [
+    "accessibility",
+    "notifications",
+    "text"
+  ]
+}
