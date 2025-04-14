@@ -1,6 +1,8 @@
 import { basename } from 'path';
 import { parseSync } from 'svgson';
+import { optimize } from 'svgo';
 import { generateHashedKey, readSvg, hasDuplicatedChildren } from '@lucide/helpers';
+import convertRoundedRectToPath from '../utils/convertRoundedRectToPath.mjs';
 
 /**
  * Build an object in the format: `{ <name>: <contents> }`.
@@ -16,7 +18,14 @@ export default async function generateIconObject(
   const svgsContentPromises = svgFiles.map(async (svgFile) => {
     const name = basename(svgFile, '.svg');
     const svg = await readSvg(svgFile, iconsDirectory);
-    const contents = parseSync(svg);
+    const flattenedSvg = optimize(svg, {
+      plugins: [
+        { name: 'convertShapeToPath', params: { convertArcs: true } },
+        convertRoundedRectToPath,
+        { name: 'mergePaths', params: { force: true } },
+      ],
+    }).data;
+    const contents = parseSync(flattenedSvg);
 
     if (!(contents.children && contents.children.length)) {
       throw new Error(`${name}.svg has no children!`);
